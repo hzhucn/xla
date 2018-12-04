@@ -59,7 +59,10 @@ torch_xla_sources = [
     'torch_xla/csrc/passes/insert_explicit_expand.cpp',
     'torch_xla/csrc/passes/remove_unused_forward_outputs.cpp',
     'torch_xla/csrc/passes/replace_untraced_operators.cpp',
+    'torch_xla/csrc/passes/set_elementwise_output_shape.cpp',
+    'torch_xla/csrc/passes/set_log_softmax_output_shape.cpp',
     'torch_xla/csrc/passes/set_mat_mul_output_shape.cpp',
+    'torch_xla/csrc/passes/set_threshold_output_shape.cpp',
     'torch_xla/csrc/passes/threshold_backward_peephole.cpp',
 ]
 

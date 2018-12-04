@@ -254,7 +254,7 @@ XlaComputationInOut XlaTranslator::BuildComputationProgram(
               BuildConvolution(node, cctx.OpForInput(node, 0),
                                cctx.OpForInput(node, 1), conv_precision_);
         }
-        cctx.AddNodeOp(node, xla_output);
+        cctx.AddNodeOpById(node->output(0)->unique(), xla_output);
         break;
       }
       case aten::thnn_conv2d_backward: {
@@ -487,6 +487,15 @@ XlaComputationInOut XlaTranslator::BuildComputationProgram(
         xla::XlaOp xla_output = BuildNllLossBackward(
             node, cctx.OpForInput(node, 1), cctx.OpForInput(node, 2));
         cctx.AddNodeOp(node, xla_output);
+        break;
+      }
+      case aten::size: {
+        CHECK_EQ(node->inputs().size(), 1);
+        const auto shape_sizes = XlaHelpers::ShapeSizes(
+            XlaHelpers::ShapeOfXlaOp(cctx.OpForInput(node, 0)));
+        std::vector<xla::int64> elements(shape_sizes.begin(),
+                                         shape_sizes.end());
+        cctx.AddNodeOp(node, xla::ConstantR1<xla::int64>(b, elements));
         break;
       }
       case prim::Constant: {

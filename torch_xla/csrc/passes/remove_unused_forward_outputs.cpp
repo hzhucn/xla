@@ -118,6 +118,17 @@ void RemoveNodeOutputFromGradient(Node* node, const size_t node_output_idx,
     }
   }
 
+  const auto df_input_vjps_it = std::find(
+      gradient.df_input_vjps.begin(), gradient.df_input_vjps.end(), output_idx);
+  JIT_ASSERT(df_input_vjps_it != gradient.df_input_vjps.end());
+  const auto df_input_vjps_val = *df_input_vjps_it;
+  gradient.df_input_vjps.erase(df_input_vjps_it);
+  for (auto& df_input_vjps_elem : gradient.df_input_vjps) {
+    if (df_input_vjps_elem > df_input_vjps_val) {
+      --df_input_vjps_elem;
+    }
+  }
+
   // Finally, remove the node from all inputs of the backward graph.
   RemoveInputFromBackwardGraph(
       /*gradient=*/gradient,
